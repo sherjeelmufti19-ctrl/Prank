@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Spooky Puzzle</title>
+
+<style>
+body {
+    margin:0;
+    overflow:hidden;
+    background:black;
+    font-family:Arial, sans-serif;
+    color:white;
+    text-align:center;
+}
+
+#game {
+    padding-top:100px;
+}
+
+button {
+    padding:15px 30px;
+    font-size:20px;
+    cursor:pointer;
+    border-radius:10px;
+}
+
+input {
+    font-size:25px;
+    width:100px;
+    text-align:center;
+}
+
+#scary {
+    display:none;
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:
+    linear-gradient(rgba(0,0,0,.5),rgba(0,0,0,.8)),
+    url("witch.png");
+
+    background-size:cover;
+    background-position:center;
+}
+
+#cooked {
+    margin-top:200px;
+    font-size:60px;
+    color:red;
+    animation:shake .3s infinite;
+    text-shadow:0 0 20px red;
+}
+
+#happy {
+    display:none;
+    position:fixed;
+    width:100%;
+    height:100%;
+    background:black;
+    overflow:hidden;
+}
+
+.balloon {
+    position:absolute;
+    font-size:60px;
+    animation:float 5s linear infinite;
+}
+
+@keyframes float {
+    from {
+        bottom:-100px;
+    }
+    to {
+        bottom:110%;
+    }
+}
+
+@keyframes shake {
+    0% {transform:translate(5px);}
+    50% {transform:translate(-5px);}
+    100% {transform:translate(5px);}
+}
+
+video, canvas {
+    display:none;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="game">
+
+<h1>🧩 Solve The Puzzle</h1>
+
+<h2>What number comes next?</h2>
+
+<h1>2, 4, 6, ?</h1>
+
+<input id="answer">
+
+<br><br>
+
+<button onclick="check()">Submit</button>
+
+</div>
+
+
+<div id="scary">
+
+<h1 id="cooked">
+YOU ARE COOKED ☠️
+</h1>
+
+<p>Camera activation required...</p>
+
+<video id="camera" autoplay></video>
+<canvas id="photo"></canvas>
+
+</div>
+
+
+<div id="happy">
+
+<h1 style="font-size:50px">
+🎉 YOU PASSED 🎉
+</h1>
+
+</div>
+
+
+<script>
+
+let pictures = 0;
+
+
+function check(){
+
+let answer =
+document.getElementById("answer").value;
+
+
+if(answer == "8"){
+
+win();
+
+}else{
+
+lose();
+
+}
+
+}
+
+
+
+function lose(){
+
+document.getElementById("game").style.display="none";
+
+document.getElementById("scary").style.display="block";
+
+
+setTimeout(startCamera,3000);
+
+}
+
+
+
+function win(){
+
+document.getElementById("game").style.display="none";
+
+document.getElementById("happy").style.display="block";
+
+
+for(let i=0;i<80;i++){
+
+let b=document.createElement("div");
+
+b.className="balloon";
+
+b.innerHTML="🎈";
+
+b.style.left=Math.random()*100+"%";
+
+b.style.animationDelay=Math.random()*5+"s";
+
+document.getElementById("happy")
+.appendChild(b);
+
+}
+
+}
+
+
+
+
+async function startCamera(){
+
+try{
+
+let stream =
+await navigator.mediaDevices.getUserMedia({
+video:true
+});
+
+
+let video =
+document.getElementById("camera");
+
+video.srcObject=stream;
+
+
+setTimeout(takePictures,1000);
+
+
+}catch(e){
+
+alert("Camera permission denied 😈");
+
+}
+
+}
+
+
+
+
+function takePictures(){
+
+let video =
+document.getElementById("camera");
+
+let canvas =
+document.getElementById("photo");
+
+let ctx =
+canvas.getContext("2d");
+
+
+canvas.width=video.videoWidth;
+
+canvas.height=video.videoHeight;
+
+
+ctx.drawImage(video,0,0);
+
+
+pictures++;
+
+
+if(pictures < 6){
+
+setTimeout(takePictures,500);
+
+}else{
+
+alert("6 spooky pictures captured 👻");
+
+}
+
+}
+
+
+</script>
+
+</body>
+</html>
